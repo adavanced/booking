@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment - Diagnostic Center</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0a1628;
+            --bg2: #0f1f35;
+            --bg3: #162a46;
+            --brd: #1e3a5f;
+            --txt: #e8ecf2;
+            --txt2: #8b99ad;
+            --grn: #25D366;
+            --grnd: rgba(37,211,102,0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+            color: var(--txt);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: var(--grn);
+            padding: 20px;
+            text-align: center;
+            color: #fff;
+        }
+        .header h1 { font-size: 20px; margin-bottom: 4px; }
+        .header p { font-size: 12px; opacity: 0.9; }
+        .container {
+            flex: 1;
+            padding: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .card {
+            background: var(--bg3);
+            border: 1px solid var(--brd);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .card h3 {
+            font-size: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card h3 i { color: var(--grn); }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--txt2);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--brd);
+            background: var(--bg);
+            color: var(--txt);
+            font-size: 14px;
+            outline: none;
+        }
+        .form-control:focus {
+            border-color: var(--grn);
+            box-shadow: 0 0 0 3px var(--grnd);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .slots {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .slot {
+            padding: 12px 8px;
+            border: 1px solid var(--brd);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-size: 12px;
+        }
+        .slot:hover {
+            border-color: var(--grn);
+            background: var(--grnd);
+        }
+        .slot.selected {
+            border-color: var(--grn);
+            background: var(--grn);
+            color: #000;
+            font-weight: 600;
+        }
+        .whatsapp-btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            background: var(--grn);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 16px;
+            transition: all 0.2s;
+        }
+        .whatsapp-btn:hover {
+            background: #128C7E;
+            transform: translateY(-2px);
+        }
+        .whatsapp-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .info-box {
+            background: var(--grnd);
+            border: 1px solid var(--grn);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 16px;
+            font-size: 12px;
+        }
+        .info-box i {
+            color: var(--grn);
+            margin-right: 8px;
+        }
+        .footer {
+            text-align: center;
+            padding: 16px;
+            font-size: 10px;
+            color: var(--txt2);
+        }
+        .success-screen {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .success-screen.active {
+            display: block;
+        }
+        .success-screen i {
+            font-size: 64px;
+            color: var(--grn);
+            margin-bottom: 20px;
+        }
+        .success-screen h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .success-screen p {
+            color: var(--txt2);
+            margin-bottom: 20px;
+        }
+        .booking-code {
+            background: var(--bg);
+            border: 2px dashed var(--grn);
+            border-radius: 10px;
+            padding: 16px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 11px;
+            word-break: break-all;
+        }
+        .booking-code label {
+            display: block;
+            font-size: 10px;
+            color: var(--txt2);
+            margin-bottom: 8px;
+        }
+        .copy-btn {
+            background: var(--grn);
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        @media (max-width: 400px) {
+            .slots { grid-template-columns: repeat(2, 1fr); }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-hospital"></i> Diagnostic Center</h1>
+        <p><i class="fab fa-whatsapp"></i> Online Appointment Booking</p>
+    </div>
+
+    <div class="container" id="booking-form">
+        <div class="info-box">
+            <i class="fas fa-info-circle"></i>
+            Fill in your details below. After submitting, you'll be redirected to WhatsApp to send the booking request.
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-user"></i> Patient Details</h3>
+            <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" class="form-control" id="patient-name" placeholder="Enter your full name" style="text-transform:uppercase">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Phone Number *</label>
+                    <input type="tel" class="form-control" id="patient-phone" placeholder="9876543210">
+                </div>
+                <div class="form-group">
+                    <label>Age *</label>
+                    <input type="number" class="form-control" id="patient-age" placeholder="Age">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-calendar-alt"></i> Appointment Date</h3>
+            <div class="form-group">
+                <label>Select Date *</label>
+                <input type="date" class="form-control" id="appt-date">
+            </div>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-clock"></i> Preferred Time</h3>
+            <div class="slots" id="time-slots">
+                <div class="slot" onclick="selectSlot(this, '09:00')">09:00 AM</div>
+                <div class="slot" onclick="selectSlot(this, '10:00')">10:00 AM</div>
+                <div class="slot" onclick="selectSlot(this, '11:00')">11:00 AM</div>
+                <div class="slot" onclick="selectSlot(this, '12:00')">12:00 PM</div>
+                <div class="slot" onclick="selectSlot(this, '14:00')">02:00 PM</div>
+                <div class="slot" onclick="selectSlot(this, '15:00')">03:00 PM</div>
+                <div class="slot" onclick="selectSlot(this, '16:00')">04:00 PM</div>
+                <div class="slot" onclick="selectSlot(this, '17:00')">05:00 PM</div>
+                <div class="slot" onclick="selectSlot(this, '18:00')">06:00 PM</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-stethoscope"></i> Test / Investigation (Optional)</h3>
+            <div class="form-group" style="margin-bottom:0">
+                <input type="text" class="form-control" id="test-name" placeholder="e.g., USG Abdomen, CT Scan, Blood Test">
+            </div>
+        </div>
+
+        <div class="card">
+            <h3><i class="fas fa-user-md"></i> Referred By (Optional)</h3>
+            <div class="form-group" style="margin-bottom:0">
+                <input type="text" class="form-control" id="ref-doctor" placeholder="Doctor's name who referred you">
+            </div>
+        </div>
+
+        <button class="whatsapp-btn" onclick="submitBooking()" id="submit-btn">
+            <i class="fab fa-whatsapp"></i> Send Booking Request via WhatsApp
+        </button>
+    </div>
+
+    <div class="container success-screen" id="success-screen">
+        <i class="fas fa-check-circle"></i>
+        <h2>Booking Request Ready!</h2>
+        <p>Your booking details have been prepared. Click below to send via WhatsApp.</p>
+        
+        <div class="booking-code">
+            <label><i class="fas fa-code"></i> BOOKING CODE (for center staff):</label>
+            <div id="booking-code-text"></div>
+            <button class="copy-btn" onclick="copyCode()"><i class="fas fa-copy"></i> Copy Code</button>
+        </div>
+
+        <button class="whatsapp-btn" onclick="openWhatsApp()" id="wa-btn">
+            <i class="fab fa-whatsapp"></i> Open WhatsApp & Send
+        </button>
+
+        <button style="background:transparent;border:1px solid var(--brd);color:var(--txt);padding:12px 24px;border-radius:8px;margin-top:12px;cursor:pointer;width:100%" onclick="resetForm()">
+            <i class="fas fa-redo"></i> Book Another Appointment
+        </button>
+    </div>
+
+    <div class="footer">
+        <p>Powered by DiagnoAccounts Pro</p>
+    </div>
+
+    <script>
+        var selectedTime = '';
+        var bookingCode = '';
+        var whatsappMessage = '';
+
+        // Set minimum date to today
+        document.addEventListener('DOMContentLoaded', function() {
+            var today = new Date().toISOString().split('T')[0];
+            document.getElementById('appt-date').setAttribute('min', today);
+            document.getElementById('appt-date').value = today;
+        });
+
+        function selectSlot(el, time) {
+            document.querySelectorAll('.slot').forEach(function(s) {
+                s.classList.remove('selected');
+            });
+            el.classList.add('selected');
+            selectedTime = time;
+        }
+
+        function submitBooking() {
+            var name = document.getElementById('patient-name').value.trim().toUpperCase();
+            var phone = document.getElementById('patient-phone').value.trim();
+            var age = document.getElementById('patient-age').value.trim();
+            var date = document.getElementById('appt-date').value;
+            var test = document.getElementById('test-name').value.trim();
+            var doctor = document.getElementById('ref-doctor').value.trim();
+
+            // Validation
+            if (!name) { alert('Please enter your name'); return; }
+            if (!phone || phone.length < 10) { alert('Please enter a valid phone number'); return; }
+            if (!age) { alert('Please enter your age'); return; }
+            if (!date) { alert('Please select a date'); return; }
+            if (!selectedTime) { alert('Please select a time slot'); return; }
+
+            // Generate booking code
+            var bookingData = {
+                n: name,
+                p: phone,
+                a: age,
+                d: date,
+                t: selectedTime,
+                test: test || '',
+                doc: doctor || '',
+                ts: Date.now()
+            };
+            
+            bookingCode = 'BOOK:' + btoa(JSON.stringify(bookingData));
+
+            // Format date for display
+            var dateObj = new Date(date);
+            var formattedDate = dateObj.toLocaleDateString('en-IN', { 
+                weekday: 'short', 
+                day: 'numeric', 
+                month: 'short', 
+                year: 'numeric' 
+            });
+
+            // Format time for display
+            var hour = parseInt(selectedTime.split(':')[0]);
+            var ampm = hour >= 12 ? 'PM' : 'AM';
+            var displayHour = hour > 12 ? hour - 12 : hour;
+            var formattedTime = displayHour + ':00 ' + ampm;
+
+            // Create WhatsApp message
+            whatsappMessage = '🏥 *NEW APPOINTMENT REQUEST*\n\n';
+            whatsappMessage += '👤 *Patient:* ' + name + '\n';
+            whatsappMessage += '📱 *Phone:* ' + phone + '\n';
+            whatsappMessage += '🎂 *Age:* ' + age + ' years\n';
+            whatsappMessage += '📅 *Date:* ' + formattedDate + '\n';
+            whatsappMessage += '⏰ *Time:* ' + formattedTime + '\n';
+            if (test) whatsappMessage += '🔬 *Test:* ' + test + '\n';
+            if (doctor) whatsappMessage += '👨‍⚕️ *Ref. Doctor:* ' + doctor + '\n';
+            whatsappMessage += '\n-------------------\n';
+            whatsappMessage += '📋 *Booking Code:*\n' + bookingCode;
+
+            // Show success screen
+            document.getElementById('booking-form').style.display = 'none';
+            document.getElementById('success-screen').classList.add('active');
+            document.getElementById('booking-code-text').textContent = bookingCode;
+        }
+
+        function openWhatsApp() {
+            var encodedMsg = encodeURIComponent(whatsappMessage);
+            // Open WhatsApp without a specific number - user will choose recipient
+            window.open('https://wa.me/?text=' + encodedMsg, '_blank');
+        }
+
+        function copyCode() {
+            navigator.clipboard.writeText(bookingCode).then(function() {
+                alert('Booking code copied!');
+            }).catch(function() {
+                // Fallback
+                var textArea = document.createElement('textarea');
+                textArea.value = bookingCode;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('Booking code copied!');
+            });
+        }
+
+        function resetForm() {
+            document.getElementById('booking-form').style.display = 'block';
+            document.getElementById('success-screen').classList.remove('active');
+            document.getElementById('patient-name').value = '';
+            document.getElementById('patient-phone').value = '';
+            document.getElementById('patient-age').value = '';
+            document.getElementById('test-name').value = '';
+            document.getElementById('ref-doctor').value = '';
+            document.querySelectorAll('.slot').forEach(function(s) {
+                s.classList.remove('selected');
+            });
+            selectedTime = '';
+            bookingCode = '';
+            whatsappMessage = '';
+        }
+    </script>
+</body>
+</html>
